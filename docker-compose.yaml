@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  bakery_management:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GIT_USERNAME: ${GIT_USERNAME}
+        GIT_PASSWORD: ${GIT_PASSWORD}
+    image: gcr.io/zenatix-data-archiver/bakery_management:latest
+
+  bakery_management_dev:
+    stdin_open: true
+    tty: true
+    restart: always
+    container_name: bakery_management_dev
+    env_file:
+      - .env
+    image: gcr.io/zenatix-data-archiver/bakery_management:latest
+    ports:
+      - "9101:9101"
+    working_dir: /root/src/bakery_management
+    entrypoint:
+      - /bin/bash
+      - -c
+      - python3 manage.py runserver --insecure 0.0.0.0:9101
